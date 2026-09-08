@@ -168,12 +168,12 @@ export function cleanupExpiredImages(): number {
   return removed;
 }
 
-/** Mirror a write to Google Sheets. Never blocks or breaks the UI. */
+/** Save a write to the database. Never blocks or breaks the UI. */
 function mirror(
   action: "addSeller" | "addProduct" | "addCustomer" | "addEnquiry" | "addReview",
   row: Record<string, string | number | boolean | null>,
 ) {
-  void appendSheetRow({ data: { action, row } }).catch(() => undefined);
+  void saveRecord({ data: { action, row } }).catch(() => undefined);
 }
 
 /* ---------------------------------- reads --------------------------------- */
