@@ -1,39 +1,12 @@
 /**
- * Seller-scoped mutations that persist to the Google Sheet through Apps Script.
+ * Seller-scoped writes, straight to the built-in database.
  *
- * Every handler verifies (server-side) that the signed-in Supabase user owns
- * the seller record before writing. Nothing here trusts the browser.
+ * Every handler verifies (server-side) that the signed-in user owns the shop
+ * before writing. Nothing here trusts the browser.
  */
 
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
-
-import { SHEETS_API_BASE_FALLBACK } from "@/lib/sheets-shared";
-
-async function postToSheet(
-  body: Record<string, unknown>,
-): Promise<{ ok: boolean; error?: string }> {
-  const base = process.env["SHEETS_API_BASE"] ?? SHEETS_API_BASE_FALLBACK;
-  const writeToken = process.env["SHEETS_WRITE_TOKEN"] ?? undefined;
-  try {
-    const res = await fetch(base, {
-      method: "POST",
-      redirect: "follow",
-      headers: { "Content-Type": "text/plain;charset=utf-8" },
-      body: JSON.stringify(writeToken ? { ...body, token: writeToken } : body),
-    });
-    const text = await res.text();
-    if (!res.ok) return { ok: false, error: `HTTP ${res.status}` };
-    try {
-      const parsed = JSON.parse(text) as { success?: boolean; error?: string };
-      return parsed.success ? { ok: true } : { ok: false, error: parsed.error ?? "Write rejected" };
-    } catch {
-      return { ok: false, error: "Backend has no doPost handler yet" };
-    }
-  } catch (err) {
-    return { ok: false, error: String(err) };
-  }
-}
 
 const profileSchema = z.object({
   sellerId: z.string().min(1),
@@ -52,27 +25,29 @@ export const sellerUpdateProfile = createServerFn({ method: "POST" })
     const { ownsSeller } = await import("@/lib/seller-authz.server");
     if (!(await ownsSeller(data.sellerId))) return { ok: false, error: "Unauthorized" };
 
-    const row: Record<string, unknown> = { sellerId: data.sellerId };
-    if (data.businessName !== undefined) row["name"] = data.businessName;
-    if (data.tagline !== undefined) row["tagline"] = data.tagline;
-    if (data.about !== undefined) row["description"] = data.about;
-    if (data.area !== undefined) row["location"] = data.area;
-    if (data.whatsapp !== undefined) {
-      row["whatsapp"] = data.whatsapp;
-      row["phone"] = data.whatsapp;
-    }
-    if (data.imageUrl !== undefined) row["imageUrl"] = data.imageUrl;
+    const patch: Record<string, unknown> = {};
+    if (data.businessName !== undefined) patch["business_name"] = data.businessName;
+    if (data.tagline !== undefined) patch["tagline"] = data.tagline;
+    if (data.about !== undefined) patch["about"] = data.about;
+    if (data.area !== undefined) patch["area"] = data.area;
+    if (data.whatsapp !== undefined) patch["whatsapp"] = data.whatsapp;
+    if (data.imageUrl !== undefined) patch["image_url"] = data.imageUrl;
+    if (!Object.keys(patch).length) return { ok: true };
 
-    if (Object.keys(row).length === 1) return { ok: true };
-    return postToSheet({ action: "update", table: "sellers", data: row });
+    const { db } = await import("@/lib/db.server");
+    try {
+      const { error } = await db().from("sellers").update(patch).eq("id", data.sellerId);
+      return error ? { ok: false, error: error.message } : { ok: true };
+    } catch (err) {
+      return { ok: false, error: String(err) };
+    }
   });
 
 /**
  * Confirms the signed-in seller owns `productId`.
  *
- * Returns "ok" when the product belongs to them, "unknown" when the sheet has
- * not seen the product yet (freshly created locally — nothing to update) and
- * "denied" for everything else.
+ * Returns "ok" when the item belongs to them, "unknown" when the database has
+ * not seen the item yet (nothing to update) and "denied" for everything else.
  */
 async function ownsProduct(
   sellerId: string,
@@ -81,16 +56,13 @@ async function ownsProduct(
   const { ownsSeller } = await import("@/lib/seller-authz.server");
   if (!(await ownsSeller(sellerId))) return "denied";
 
-  const { readTables } = await import("@/lib/sheets-cache.server");
-  const { rows } = await readTables(["products"]);
-  const match = (rows["products"] ?? []).find(
-    (r) => String(r["productId"] ?? r["id"] ?? "") === productId,
-  );
-  if (!match) return "unknown";
-  return String(match["sellerId"] ?? "") === sellerId ? "ok" : "denied";
+  const { db } = await import("@/lib/db.server");
+  const { data } = await db().from("products").select("seller_id").eq("id", productId).maybeSingle();
+  if (!data) return "unknown";
+  return (data as { seller_id: string }).seller_id === sellerId ? "ok" : "denied";
 }
 
-/** Update a catalogue photo for a product the signed-in seller owns. */
+/** Update a catalogue photo for an item the signed-in seller owns. */
 export const sellerUpdateProductImage = createServerFn({ method: "POST" })
   .inputValidator((data: unknown) =>
     z
@@ -106,14 +78,15 @@ export const sellerUpdateProductImage = createServerFn({ method: "POST" })
     if (owns === "denied") return { ok: false, error: "Unauthorized" };
     if (owns === "unknown") return { ok: true };
 
-    return postToSheet({
-      action: "update",
-      table: "products",
-      data: { productId: data.productId, imageUrl: data.imageUrl },
-    });
+    const { db } = await import("@/lib/db.server");
+    const { error } = await db()
+      .from("products")
+      .update({ image_url: data.imageUrl })
+      .eq("id", data.productId);
+    return error ? { ok: false, error: error.message } : { ok: true };
   });
 
-/** Edit the details of a product the signed-in seller owns. */
+/** Edit the details of an item the signed-in seller owns. */
 export const sellerUpdateProduct = createServerFn({ method: "POST" })
   .inputValidator((data: unknown) =>
     z
@@ -133,21 +106,20 @@ export const sellerUpdateProduct = createServerFn({ method: "POST" })
     if (owns === "denied") return { ok: false, error: "Unauthorized" };
     if (owns === "unknown") return { ok: true };
 
-    const row: Record<string, unknown> = { productId: data.productId };
-    if (data.name !== undefined) row["name"] = data.name;
-    if (data.price !== undefined) row["price"] = data.price;
-    if (data.unit !== undefined) row["unit"] = data.unit;
-    if (data.description !== undefined) row["description"] = data.description;
-    if (data.type !== undefined) row["type"] = data.type;
+    const patch: Record<string, unknown> = {};
+    if (data.name !== undefined) patch["name"] = data.name;
+    if (data.price !== undefined) patch["price"] = data.price;
+    if (data.unit !== undefined) patch["unit"] = data.unit;
+    if (data.description !== undefined) patch["description"] = data.description;
+    if (data.type !== undefined) patch["type"] = data.type;
+    if (!Object.keys(patch).length) return { ok: true };
 
-    if (Object.keys(row).length === 1) return { ok: true };
-    return postToSheet({ action: "update", table: "products", data: row });
+    const { db } = await import("@/lib/db.server");
+    const { error } = await db().from("products").update(patch).eq("id", data.productId);
+    return error ? { ok: false, error: error.message } : { ok: true };
   });
 
-/**
- * Retire a product from the catalogue (sets `active` to false on the shared
- * sheet). Sellers can only retire their own products.
- */
+/** Remove an item from the catalogue. Sellers can only remove their own. */
 export const sellerRetireProduct = createServerFn({ method: "POST" })
   .inputValidator((data: unknown) =>
     z.object({ sellerId: z.string().min(1), productId: z.string().min(1) }).parse(data),
@@ -157,10 +129,7 @@ export const sellerRetireProduct = createServerFn({ method: "POST" })
     if (owns === "denied") return { ok: false, error: "Unauthorized" };
     if (owns === "unknown") return { ok: true };
 
-    return postToSheet({
-      action: "update",
-      table: "products",
-      data: { productId: data.productId, active: false },
-    });
+    const { db } = await import("@/lib/db.server");
+    const { error } = await db().from("products").delete().eq("id", data.productId);
+    return error ? { ok: false, error: error.message } : { ok: true };
   });
-
