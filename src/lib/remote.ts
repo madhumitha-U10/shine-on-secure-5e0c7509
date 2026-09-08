@@ -1,10 +1,6 @@
 /**
- * Maps Google Sheets rows (via the Apps Script Web App) onto the app's
- * domain types. The UI never sees sheet field names — only this file does.
- *
- * Live tables: Sellers, Products, Categories.
- * Prepared for later: Customers, Enquiries, Reviews (already read + mapped,
- * currently empty in the sheet).
+ * Maps rows from the built-in database onto the app's domain types.
+ * The UI never sees storage field names — only this file does.
  */
 
 import {
@@ -213,7 +209,7 @@ function derive(data: RemoteData): RemoteData {
   return { ...data, sellers: withFeatured };
 }
 
-const CACHE_KEY = "nammaspot.sheets.cache.v1";
+const CACHE_KEY = "nammaspot.db.cache.v1";
 const CACHE_TTL = 5 * 60 * 1000;
 
 interface CacheEnvelope {
@@ -265,25 +261,16 @@ export function remoteSnapshot(): RemoteData {
   return cache ?? emptyRemote;
 }
 
-const CORE: SheetTable[] = ["categories", "sellers", "products"];
-const SECONDARY: SheetTable[] = ["customers", "enquiries", "reviews"];
-
 /**
- * Loads the sheet data. Apps Script handles one request at a time per user, so
- * everything goes through a single bundled server call, backed by a short-lived
- * localStorage cache for instant page-to-page navigation.
+ * Loads everything from the built-in database in a single round-trip, backed by
+ * a short-lived localStorage cache for instant page-to-page navigation.
  */
 export function loadRemote(force = false): Promise<RemoteData> {
   if (!force && cache) return Promise.resolve(cache);
   if (!force && inflight) return inflight;
 
   const cached = readCache();
-  if (
-    !force &&
-    cached &&
-    Date.now() - cached.at < CACHE_TTL &&
-    (cached.rows["sellers"]?.length ?? 0) >= 0
-  ) {
+  if (!force && cached && Date.now() - cached.at < CACHE_TTL) {
     rawRows = cached.rows;
     cache = build(rawRows, null);
     if (Date.now() - cached.at > 60_000) void revalidate();
@@ -292,20 +279,10 @@ export function loadRemote(force = false): Promise<RemoteData> {
 
   inflight = (async () => {
     try {
-      const core = await fetchSheetBundle({ data: { tables: CORE } });
-      rawRows = { ...rawRows, ...core.rows };
-      writeCache(core.rows);
-      cache = build(rawRows, core.error ?? null);
-
-      // Prepared tables (Customers / Enquiries / Reviews) load in the
-      // background and refresh the cache when they arrive.
-      void fetchSheetBundle({ data: { tables: SECONDARY } })
-        .then((extra) => {
-          rawRows = { ...rawRows, ...extra.rows };
-          writeCache(extra.rows);
-          cache = build(rawRows, cache?.error ?? null);
-        })
-        .catch(() => undefined);
+      const fresh = await fetchAllData();
+      rawRows = { ...rawRows, ...fresh.rows };
+      writeCache(fresh.rows);
+      cache = build(rawRows, fresh.error ?? null);
     } catch (err) {
       cache = { ...emptyRemote, error: String(err) };
     } finally {
@@ -319,7 +296,7 @@ export function loadRemote(force = false): Promise<RemoteData> {
 
 async function revalidate() {
   try {
-    const fresh = await fetchSheetBundle({ data: { tables: [...CORE, ...SECONDARY] } });
+    const fresh = await fetchAllData();
     rawRows = { ...rawRows, ...fresh.rows };
     writeCache(fresh.rows);
     cache = build(rawRows, fresh.error ?? null);
