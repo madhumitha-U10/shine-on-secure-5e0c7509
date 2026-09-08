@@ -1,11 +1,9 @@
 /**
  * NammaSpot data access layer (the only place the app talks to "the backend").
  *
- * Reads: live Google Sheets data through the Apps Script Web App
- * (src/lib/sheets.functions.ts -> src/lib/remote.ts).
+ * Reads: the built-in database (src/lib/db.functions.ts -> src/lib/remote.ts).
  * Writes: applied instantly to a localStorage overlay so the UI stays snappy,
- * and mirrored to the sheet best-effort via `appendSheetRow` (which starts
- * working the moment doPost exists in the Apps Script — see backend/Code.gs).
+ * and saved to the database through `saveRecord`.
  */
 
 import {
@@ -20,7 +18,7 @@ import {
   type Story,
 } from "@/data/seed";
 import { loadRemote, remoteSnapshot } from "@/lib/remote";
-import { appendSheetRow } from "@/lib/sheets.functions";
+import { saveRecord } from "@/lib/db.functions";
 import { adminSetSellerStatus, adminSetReviewApproval } from "@/lib/admin-mutations";
 import {
   sellerUpdateProfile,
