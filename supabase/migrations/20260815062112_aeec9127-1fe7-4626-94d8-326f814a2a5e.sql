@@ -1,0 +1,1 @@
+ALTER TABLE public.seller_accounts ADD COLUMN profile jsonb;

@@ -10,33 +10,219 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AdminRouteImport } from './routes/admin'
+import { Route as CategoriesRouteImport } from './routes/categories'
+import { Route as ExploreRouteImport } from './routes/explore'
+import { Route as FeaturedRouteImport } from './routes/featured'
+import { Route as NearMeRouteImport } from './routes/near-me'
+import { Route as SavedRouteImport } from './routes/saved'
+import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
+import { Route as StoriesRouteImport } from './routes/stories'
+import { Route as ProductProductIdRouteImport } from './routes/product.$productId'
+import { Route as SellerSlugRouteImport } from './routes/seller.$slug'
+import { Route as SellerDashboardRouteImport } from './routes/seller.dashboard'
+import { Route as SellerLoginRouteImport } from './routes/seller.login'
+import { Route as SellerRegisterRouteImport } from './routes/seller.register'
+import { Route as ApiPublicMediaSplatRouteImport } from './routes/api/public/media.$'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminRoute = AdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CategoriesRoute = CategoriesRouteImport.update({
+  id: '/categories',
+  path: '/categories',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ExploreRoute = ExploreRouteImport.update({
+  id: '/explore',
+  path: '/explore',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FeaturedRoute = FeaturedRouteImport.update({
+  id: '/featured',
+  path: '/featured',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const NearMeRoute = NearMeRouteImport.update({
+  id: '/near-me',
+  path: '/near-me',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SavedRoute = SavedRouteImport.update({
+  id: '/saved',
+  path: '/saved',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
+  id: '/sitemap.xml',
+  path: '/sitemap.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const StoriesRoute = StoriesRouteImport.update({
+  id: '/stories',
+  path: '/stories',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProductProductIdRoute = ProductProductIdRouteImport.update({
+  id: '/product/$productId',
+  path: '/product/$productId',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SellerSlugRoute = SellerSlugRouteImport.update({
+  id: '/seller/$slug',
+  path: '/seller/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SellerDashboardRoute = SellerDashboardRouteImport.update({
+  id: '/seller/dashboard',
+  path: '/seller/dashboard',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SellerLoginRoute = SellerLoginRouteImport.update({
+  id: '/seller/login',
+  path: '/seller/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SellerRegisterRoute = SellerRegisterRouteImport.update({
+  id: '/seller/register',
+  path: '/seller/register',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicMediaSplatRoute = ApiPublicMediaSplatRouteImport.update({
+  id: '/api/public/media/$',
+  path: '/api/public/media/$',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/admin': typeof AdminRoute
+  '/categories': typeof CategoriesRoute
+  '/explore': typeof ExploreRoute
+  '/featured': typeof FeaturedRoute
+  '/near-me': typeof NearMeRoute
+  '/saved': typeof SavedRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/stories': typeof StoriesRoute
+  '/product/$productId': typeof ProductProductIdRoute
+  '/seller/$slug': typeof SellerSlugRoute
+  '/seller/dashboard': typeof SellerDashboardRoute
+  '/seller/login': typeof SellerLoginRoute
+  '/seller/register': typeof SellerRegisterRoute
+  '/api/public/media/$': typeof ApiPublicMediaSplatRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/admin': typeof AdminRoute
+  '/categories': typeof CategoriesRoute
+  '/explore': typeof ExploreRoute
+  '/featured': typeof FeaturedRoute
+  '/near-me': typeof NearMeRoute
+  '/saved': typeof SavedRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/stories': typeof StoriesRoute
+  '/product/$productId': typeof ProductProductIdRoute
+  '/seller/$slug': typeof SellerSlugRoute
+  '/seller/dashboard': typeof SellerDashboardRoute
+  '/seller/login': typeof SellerLoginRoute
+  '/seller/register': typeof SellerRegisterRoute
+  '/api/public/media/$': typeof ApiPublicMediaSplatRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/admin': typeof AdminRoute
+  '/categories': typeof CategoriesRoute
+  '/explore': typeof ExploreRoute
+  '/featured': typeof FeaturedRoute
+  '/near-me': typeof NearMeRoute
+  '/saved': typeof SavedRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/stories': typeof StoriesRoute
+  '/product/$productId': typeof ProductProductIdRoute
+  '/seller/$slug': typeof SellerSlugRoute
+  '/seller/dashboard': typeof SellerDashboardRoute
+  '/seller/login': typeof SellerLoginRoute
+  '/seller/register': typeof SellerRegisterRoute
+  '/api/public/media/$': typeof ApiPublicMediaSplatRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/admin'
+    | '/categories'
+    | '/explore'
+    | '/featured'
+    | '/near-me'
+    | '/saved'
+    | '/sitemap.xml'
+    | '/stories'
+    | '/product/$productId'
+    | '/seller/$slug'
+    | '/seller/dashboard'
+    | '/seller/login'
+    | '/seller/register'
+    | '/api/public/media/$'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/admin'
+    | '/categories'
+    | '/explore'
+    | '/featured'
+    | '/near-me'
+    | '/saved'
+    | '/sitemap.xml'
+    | '/stories'
+    | '/product/$productId'
+    | '/seller/$slug'
+    | '/seller/dashboard'
+    | '/seller/login'
+    | '/seller/register'
+    | '/api/public/media/$'
+  id:
+    | '__root__'
+    | '/'
+    | '/admin'
+    | '/categories'
+    | '/explore'
+    | '/featured'
+    | '/near-me'
+    | '/saved'
+    | '/sitemap.xml'
+    | '/stories'
+    | '/product/$productId'
+    | '/seller/$slug'
+    | '/seller/dashboard'
+    | '/seller/login'
+    | '/seller/register'
+    | '/api/public/media/$'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AdminRoute: typeof AdminRoute
+  CategoriesRoute: typeof CategoriesRoute
+  ExploreRoute: typeof ExploreRoute
+  FeaturedRoute: typeof FeaturedRoute
+  NearMeRoute: typeof NearMeRoute
+  SavedRoute: typeof SavedRoute
+  SitemapDotxmlRoute: typeof SitemapDotxmlRoute
+  StoriesRoute: typeof StoriesRoute
+  ProductProductIdRoute: typeof ProductProductIdRoute
+  SellerSlugRoute: typeof SellerSlugRoute
+  SellerDashboardRoute: typeof SellerDashboardRoute
+  SellerLoginRoute: typeof SellerLoginRoute
+  SellerRegisterRoute: typeof SellerRegisterRoute
+  ApiPublicMediaSplatRoute: typeof ApiPublicMediaSplatRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -48,11 +234,123 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin': {
+      id: '/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/categories': {
+      id: '/categories'
+      path: '/categories'
+      fullPath: '/categories'
+      preLoaderRoute: typeof CategoriesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/explore': {
+      id: '/explore'
+      path: '/explore'
+      fullPath: '/explore'
+      preLoaderRoute: typeof ExploreRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/featured': {
+      id: '/featured'
+      path: '/featured'
+      fullPath: '/featured'
+      preLoaderRoute: typeof FeaturedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/near-me': {
+      id: '/near-me'
+      path: '/near-me'
+      fullPath: '/near-me'
+      preLoaderRoute: typeof NearMeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/saved': {
+      id: '/saved'
+      path: '/saved'
+      fullPath: '/saved'
+      preLoaderRoute: typeof SavedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sitemap.xml': {
+      id: '/sitemap.xml'
+      path: '/sitemap.xml'
+      fullPath: '/sitemap.xml'
+      preLoaderRoute: typeof SitemapDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/stories': {
+      id: '/stories'
+      path: '/stories'
+      fullPath: '/stories'
+      preLoaderRoute: typeof StoriesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/product/$productId': {
+      id: '/product/$productId'
+      path: '/product/$productId'
+      fullPath: '/product/$productId'
+      preLoaderRoute: typeof ProductProductIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/seller/$slug': {
+      id: '/seller/$slug'
+      path: '/seller/$slug'
+      fullPath: '/seller/$slug'
+      preLoaderRoute: typeof SellerSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/seller/dashboard': {
+      id: '/seller/dashboard'
+      path: '/seller/dashboard'
+      fullPath: '/seller/dashboard'
+      preLoaderRoute: typeof SellerDashboardRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/seller/login': {
+      id: '/seller/login'
+      path: '/seller/login'
+      fullPath: '/seller/login'
+      preLoaderRoute: typeof SellerLoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/seller/register': {
+      id: '/seller/register'
+      path: '/seller/register'
+      fullPath: '/seller/register'
+      preLoaderRoute: typeof SellerRegisterRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/media/$': {
+      id: '/api/public/media/$'
+      path: '/api/public/media/$'
+      fullPath: '/api/public/media/$'
+      preLoaderRoute: typeof ApiPublicMediaSplatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AdminRoute: AdminRoute,
+  CategoriesRoute: CategoriesRoute,
+  ExploreRoute: ExploreRoute,
+  FeaturedRoute: FeaturedRoute,
+  NearMeRoute: NearMeRoute,
+  SavedRoute: SavedRoute,
+  SitemapDotxmlRoute: SitemapDotxmlRoute,
+  StoriesRoute: StoriesRoute,
+  ProductProductIdRoute: ProductProductIdRoute,
+  SellerSlugRoute: SellerSlugRoute,
+  SellerDashboardRoute: SellerDashboardRoute,
+  SellerLoginRoute: SellerLoginRoute,
+  SellerRegisterRoute: SellerRegisterRoute,
+  ApiPublicMediaSplatRoute: ApiPublicMediaSplatRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

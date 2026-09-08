@@ -1,0 +1,25 @@
+{
+  "name": "NammaSpot — Chennai's Local Marketplace",
+  "short_name": "NammaSpot",
+  "description": "Discover Chennai and Tamil Nadu's local makers, bakers, mehendi artists and boutiques.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#fdf8f3",
+  "theme_color": "#7a1420",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/icons/nammaspot-icon.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/nammaspot-icon.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}
