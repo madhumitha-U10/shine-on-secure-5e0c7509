@@ -17,7 +17,10 @@ import {
   type Seller,
   type SellerStatus,
 } from "@/data/seed";
-import { fetchSheetBundle, type SheetRow, type SheetTable } from "@/lib/sheets.functions";
+import { fetchAllData, type DbRow } from "@/lib/db.functions";
+
+/** Row shape coming back from the database reader. */
+type SheetRow = DbRow;
 
 const str = (v: unknown, fallback = "") =>
   v === undefined || v === null || v === "" ? fallback : String(v).trim();
