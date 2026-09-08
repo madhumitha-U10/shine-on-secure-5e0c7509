@@ -14,13 +14,309 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      categories: {
+        Row: {
+          blurb: string
+          created_at: string
+          id: string
+          name: string
+          slug: string
+          tamil_name: string
+          updated_at: string
+        }
+        Insert: {
+          blurb?: string
+          created_at?: string
+          id: string
+          name: string
+          slug: string
+          tamil_name?: string
+          updated_at?: string
+        }
+        Update: {
+          blurb?: string
+          created_at?: string
+          id?: string
+          name?: string
+          slug?: string
+          tamil_name?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      customers: {
+        Row: {
+          area: string
+          avatar_url: string
+          created_at: string
+          id: string
+          name: string
+          phone: string
+          updated_at: string
+        }
+        Insert: {
+          area?: string
+          avatar_url?: string
+          created_at?: string
+          id: string
+          name?: string
+          phone?: string
+          updated_at?: string
+        }
+        Update: {
+          area?: string
+          avatar_url?: string
+          created_at?: string
+          id?: string
+          name?: string
+          phone?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      enquiries: {
+        Row: {
+          created_at: string
+          customer_name: string
+          event_date: string
+          id: string
+          message: string
+          phone: string
+          product_id: string | null
+          seller_id: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          customer_name?: string
+          event_date?: string
+          id: string
+          message?: string
+          phone?: string
+          product_id?: string | null
+          seller_id: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          customer_name?: string
+          event_date?: string
+          id?: string
+          message?: string
+          phone?: string
+          product_id?: string | null
+          seller_id?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "enquiries_seller_id_fkey"
+            columns: ["seller_id"]
+            isOneToOne: false
+            referencedRelation: "sellers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      products: {
+        Row: {
+          active: boolean
+          created_at: string
+          description: string
+          id: string
+          image_url: string
+          name: string
+          price: number
+          seller_id: string
+          type: string
+          unit: string
+          updated_at: string
+          views: number
+        }
+        Insert: {
+          active?: boolean
+          created_at?: string
+          description?: string
+          id: string
+          image_url?: string
+          name: string
+          price?: number
+          seller_id: string
+          type?: string
+          unit?: string
+          updated_at?: string
+          views?: number
+        }
+        Update: {
+          active?: boolean
+          created_at?: string
+          description?: string
+          id?: string
+          image_url?: string
+          name?: string
+          price?: number
+          seller_id?: string
+          type?: string
+          unit?: string
+          updated_at?: string
+          views?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "products_seller_id_fkey"
+            columns: ["seller_id"]
+            isOneToOne: false
+            referencedRelation: "sellers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      reviews: {
+        Row: {
+          approved: boolean
+          comment: string
+          created_at: string
+          customer_name: string
+          id: string
+          rating: number
+          seller_id: string
+          updated_at: string
+        }
+        Insert: {
+          approved?: boolean
+          comment?: string
+          created_at?: string
+          customer_name?: string
+          id: string
+          rating?: number
+          seller_id: string
+          updated_at?: string
+        }
+        Update: {
+          approved?: boolean
+          comment?: string
+          created_at?: string
+          customer_name?: string
+          id?: string
+          rating?: number
+          seller_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reviews_seller_id_fkey"
+            columns: ["seller_id"]
+            isOneToOne: false
+            referencedRelation: "sellers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      seller_accounts: {
+        Row: {
+          created_at: string
+          nammaspot_id: string
+          profile: Json | null
+          seller_id: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          nammaspot_id: string
+          profile?: Json | null
+          seller_id?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          nammaspot_id?: string
+          profile?: Json | null
+          seller_id?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      sellers: {
+        Row: {
+          about: string
+          area: string
+          business_name: string
+          category_id: string
+          city: string
+          cover_url: string
+          created_at: string
+          delivers_across_city: boolean
+          email: string
+          featured: boolean
+          id: string
+          image_url: string
+          instagram: string
+          owner_name: string
+          price_from: number
+          slug: string
+          status: string
+          tagline: string
+          tags: string[]
+          updated_at: string
+          whatsapp: string
+        }
+        Insert: {
+          about?: string
+          area?: string
+          business_name: string
+          category_id?: string
+          city?: string
+          cover_url?: string
+          created_at?: string
+          delivers_across_city?: boolean
+          email?: string
+          featured?: boolean
+          id: string
+          image_url?: string
+          instagram?: string
+          owner_name?: string
+          price_from?: number
+          slug: string
+          status?: string
+          tagline?: string
+          tags?: string[]
+          updated_at?: string
+          whatsapp?: string
+        }
+        Update: {
+          about?: string
+          area?: string
+          business_name?: string
+          category_id?: string
+          city?: string
+          cover_url?: string
+          created_at?: string
+          delivers_across_city?: boolean
+          email?: string
+          featured?: boolean
+          id?: string
+          image_url?: string
+          instagram?: string
+          owner_name?: string
+          price_from?: number
+          slug?: string
+          status?: string
+          tagline?: string
+          tags?: string[]
+          updated_at?: string
+          whatsapp?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      nammaspot_id_available: { Args: { _id: string }; Returns: boolean }
     }
     Enums: {
       [_ in never]: never
